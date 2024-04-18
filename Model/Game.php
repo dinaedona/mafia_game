@@ -1,6 +1,5 @@
 <?php
 
-
 class Game
 {
     private ?int $id;

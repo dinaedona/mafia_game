@@ -1,6 +1,6 @@
 <?php
-require_once '../Database/DBConnection.php';
-require_once '../Model/Game.php';
+require_once $_SERVER['DOCUMENT_ROOT'] .'/Database/DBConnection.php';
+require_once $_SERVER['DOCUMENT_ROOT'] .'/Model/Game.php';
 
 class GameRepository
 {

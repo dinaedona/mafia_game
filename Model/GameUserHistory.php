@@ -1,5 +1,6 @@
 <?php
 require_once '../Model/User.php';
+
 class GameUserHistory
 {
     private User $actor;
@@ -12,6 +13,7 @@ class GameUserHistory
         $this->recipient = $recipient;
         $this->action = $action;
     }
+
     public static function fromArray(array $data): GameUserHistory
     {
         $actor = User::fromValues($data['actor_id'], $data['actor_username'], $data['actor_password']);

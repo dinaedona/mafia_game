@@ -1,9 +1,10 @@
 <?php
+
 class Response
 {
-   private int $status;
-   private string $message;
-   private $data;
+    private int $status;
+    private string $message;
+    private $data;
 
     private function __construct(int $status, string $message, $data)
     {
@@ -11,6 +12,7 @@ class Response
         $this->message = $message;
         $this->data = $data;
     }
+
     public static function create(int $status, string $message = '', $data = null): self
     {
         return new self($status, $message, $data);
@@ -34,7 +36,8 @@ class Response
         return $this->data;
     }
 
-    public function isSuccess():bool {
+    public function isSuccess(): bool
+    {
         return $this->status === 1;
     }
 

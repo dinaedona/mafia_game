@@ -1,4 +1,5 @@
 <?php
+
 class Role
 {
     private int $id;
@@ -14,9 +15,10 @@ class Role
     {
         return new self($data['id'], $data['name']);
     }
+
     public static function fromValues(int $id, string $name): Role
     {
-       return new self($id, $name);
+        return new self($id, $name);
     }
 
     public function getId(): int

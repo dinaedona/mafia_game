@@ -1,3 +1,7 @@
+<?php require_once './Access/AccessVerifier.php';
+$access = new AccessVerifier();
+$access->verify('index');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

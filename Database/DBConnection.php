@@ -1,5 +1,6 @@
 <?php
-require_once '../Exception/DatabaseException.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/Exception/DatabaseException.php';
+
 class DBConnection
 {
     const HOST = "localhost";
@@ -7,14 +8,9 @@ class DBConnection
     const PASSWORD = "";
     const DATABASE = "mafia_game";
     const PORT = '3306';
-    private string $last_query;
-    public $result;
     private mysqli $connection;
     private array $transactions = [];
     private bool $hasTransactionError = false;
-    var $num_queries = 0;
-    var $start_time;
-    protected $last_error;
 
     public function __construct($connection)
     {
@@ -28,7 +24,8 @@ class DBConnection
         return new DBConnection($connection);
     }
 
-    public function executeQuery($query, string $types, ...$parameters): void{
+    public function executeQuery($query, string $types, ...$parameters): void
+    {
         $statement = $this->connection->prepare($query);
         if ('' !== $types || !empty($parameters)) {
             $statement->bind_param($types, ...$parameters);

@@ -1,6 +1,4 @@
 <?php
-
-
 class Text
 {
     public const VALUES = [

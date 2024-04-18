@@ -14,11 +14,11 @@ class AuthenticatorProcessor
         $this->userRepository = new UserRepository();
         $this->passwordValidator = new PasswordValidator();
     }
+
     public function login(User $user): Response
     {
         $userEntry = $this->userRepository->findOneByUsernameAndPassword($user->getUsername());
-        if (!$userEntry || !password_verify($user->getPassword(), $userEntry->getPassword()))
-        {
+        if (!$userEntry || !password_verify($user->getPassword(), $userEntry->getPassword())) {
             return Response::create(0, 'Invalid email or password');
         }
         session_start(); // Start the session

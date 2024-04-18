@@ -5,6 +5,9 @@ require_once '../Repository/UserRoleRepository.php';
 require_once '../Repository/GameRepository.php';
 require_once '../Model/GameUserRole.php';
 require_once '../Model/UserRole.php';
+require_once '../Access/AccessVerifier.php';
+$access = new AccessVerifier();
+$access->verify('night');
 
 $gameUserRepo = new GameUserRepository();
 $userRoleRepo = new UserRoleRepository();
@@ -20,7 +23,7 @@ $role = $isMafia ? 'mafia' : 'doctor'
 <div class="form-group text-center">
 <h1 class="text-center mt-5"> Night phase...zzZ! </h1>
 <span class=" text-center" data-show="<?= !$isMafia && !$isDoctorAndAlive ? 1: 0 ?>"
-      style="font-size: larger; font-weight: bolder; <?= !$isMafia && !$isDoctorAndAlive ? '': 'display:none' ?>" id="countdown">30</span>
+      style="font-size: larger; font-weight: bolder; <?= !$isMafia && !$isDoctorAndAlive ? '': 'display:none' ?>" id="countdown">10</span>
 </div>
 
 
@@ -80,11 +83,10 @@ $role = $isMafia ? 'mafia' : 'doctor'
 
 
             let countDownElem = document.getElementById("countdown");
-        console.log(parseInt(countDownElem.getAttribute('data-show')) === 1);
             if (parseInt(countDownElem.getAttribute('data-show')) === 1) {
                 let currentTimestamp = Date.now();
-                // Add 30 seconds (30,000 milliseconds) to the current timestamp
-                let futureTimestamp = currentTimestamp + 30000;
+                // Add 10 seconds (30,000 milliseconds) to the current timestamp
+                let futureTimestamp = currentTimestamp + 10000;
                 // Set the date we're counting down to
                 let countDownDate = new Date(futureTimestamp).getTime();
 
@@ -97,7 +99,7 @@ $role = $isMafia ? 'mafia' : 'doctor'
                     document.getElementById("countdown").innerHTML = seconds + "s ";
 
                     // If the count down is finished, write some text
-                    if (distance < 0) {
+                    if (seconds < 1) {
                         clearInterval(x);
                         changeGameStatus('Day');
                         window.open('day.php', '_self')
@@ -143,9 +145,7 @@ $role = $isMafia ? 'mafia' : 'doctor'
         });
 
         $('#doctor_protect_player').click(function () {
-            console.log('fffff')
             let selectedUser = $('input[name="user_to_protect"]').filter(":checked").val();
-            console.log(selectedUser);
             if (selectedUser === undefined || selectedUser === null) {
                 return;
             }

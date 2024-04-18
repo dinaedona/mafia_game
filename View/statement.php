@@ -2,6 +2,9 @@
 include 'header.php';
 require_once '../Repository/GameUserRepository.php';
 require_once '../Model/GameUserRole.php';
+require_once '../Access/AccessVerifier.php';
+$access = new AccessVerifier();
+$access->verify('statement');
 $gameUserRepo = new GameUserRepository();
 $gameUserRole = $gameUserRepo->findOneByGameIdAndUserId($_SESSION['game_id'], $_SESSION['user_id']);
 ?>

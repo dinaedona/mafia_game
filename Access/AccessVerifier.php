@@ -1,5 +1,5 @@
 <?php
-require_once 'Repository/GameRepository.php';
+require_once $_SERVER['DOCUMENT_ROOT'] .'/Repository/GameRepository.php';
 
 class AccessVerifier
 {
@@ -12,7 +12,10 @@ class AccessVerifier
 
     public function verify($page): void
     {
-        if (!isset($_SESSION['user_id'])) {
+        if ($page == 'index' && !isset($_SESSION['user_id'])) {
+            return;
+        }
+        if ($page !== 'index' && !isset($_SESSION['user_id'])) {
             header("Location: /index.php");
             exit();
         }

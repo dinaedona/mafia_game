@@ -6,7 +6,7 @@ require_once '../Repository/UserRepository.php';
 require_once '../Repository/UserRoleRepository.php';
 require_once '../Repository/GameUserRepository.php';
 require_once '../Repository/GameUserHistoryRepository.php';
-require_once '../Model/Texts.php';
+require_once '../Model/Text.php';
 
 class GameProcessor
 {
@@ -32,16 +32,16 @@ class GameProcessor
 
     public function start(): int
     {
-        // return $this->connection->runInTransaction(function () {
-        // assign roles to users;
-        $userRoles = $this->userRoleProcessor->assignRoles();
-        $userToEliminate = $this->userRoleProcessor->getVillagerToEliminate($userRoles);
-        $userToProtect = $this->userRoleProcessor->getVillagerToEliminate($userRoles);
-        $gameId = $this->gameRepository->insert(Game::fromValues(null, 'Start', 1, $userToEliminate->getId(), $userToProtect->getId()));
-        $this->gameUserRepository->insert($gameId, $userRoles);
-        $_SESSION['game_id'] = $gameId;
-        return $gameId;
-        //     });
+        return $this->connection->runInTransaction(function () {
+            // assign roles to users;
+            $userRoles = $this->userRoleProcessor->assignRoles();
+            $userToEliminate = $this->userRoleProcessor->getVillagerToEliminate($userRoles);
+            $userToProtect = $this->userRoleProcessor->getVillagerToEliminate($userRoles);
+            $gameId = $this->gameRepository->insert(Game::fromValues(null, 'Start', 1, $userToEliminate->getId(), $userToProtect->getId()));
+            $this->gameUserRepository->insert($gameId, $userRoles);
+            $_SESSION['game_id'] = $gameId;
+            return $gameId;
+        });
     }
 
     public function saveStatements(int $gameId, int $loggedInUserId, $text): void
@@ -55,7 +55,8 @@ class GameProcessor
         $this->gameRepository->updateStatus($gameId, 'Day');
     }
 
-    public function endGame(int $gameId){
+    public function endGame(int $gameId)
+    {
         $this->gameRepository->updateStatus($gameId, 'End');
         unset($_SESSION['game_id']);
     }

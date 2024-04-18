@@ -1,4 +1,8 @@
-<?php include 'header.php'; ?>
+<?php include 'header.php';
+require_once '../Access/AccessVerifier.php';
+$access = new AccessVerifier();
+$access->verify('main');
+?>
 <div class="container mt-5 justify-content-center">
     <div class="card justify-content-center" style="width: 30rem; ">
         <div class="card-body">
