@@ -55,6 +55,11 @@ class GameProcessor
         $this->gameRepository->updateStatus($gameId, 'Day');
     }
 
+    public function endGame(int $gameId){
+        $this->gameRepository->updateStatus($gameId, 'End');
+        unset($_SESSION['game_id']);
+    }
+
     public function eliminatePlayer(int $gameId, int $loggedInUserId, int $userToEliminate): Response
     {
         // list of eliminations for all users

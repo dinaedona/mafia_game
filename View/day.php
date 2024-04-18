@@ -5,12 +5,8 @@ require_once '../Repository/UserRoleRepository.php';
 require_once '../Repository/GameRepository.php';
 require_once '../Model/GameUserRole.php';
 require_once '../Model/UserRole.php';
-require_once '../Access/AccessVerifier.php';
 $gameUserRepo = new GameUserRepository();
 $userRoleRepo = new UserRoleRepository();
-$access = new AccessVerifier();
-$access->verify('day');
-
 $gameRepo = new GameRepository();
 $loggedInUser = $userRoleRepo->findOneByGameIdAndUserId($_SESSION['game_id'], $_SESSION['user_id']);
 $gameUserRoles = $gameUserRepo->findByGameId($_SESSION['game_id']);

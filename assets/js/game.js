@@ -32,6 +32,23 @@ $(document).ready(function () {
         });
     });
 
+    $('#end_game').click(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/Controller/GameController.php',
+            data: {method: 'endGame',},
+            dataType: "json",
+            success: function (response) {
+                if (parseInt(response.status) === 1) {
+                    window.open('main.php', '_self')
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
     $('#eliminate_player').click(function () {
         let selectedUser = $('input[name="user_to_eliminate"]').filter(":checked").val();
         if(selectedUser === undefined || selectedUser === null){
@@ -62,7 +79,7 @@ $(document).ready(function () {
     });
 
     $('#detective_eliminate_player').click(function () {
-        let selectedUser = $('input[name="user_to_eliminate"]').filter(":checked").val();
+        let selectedUser = $('input[name="detective_user_to_eliminate"]').filter(":checked").val();
         if(selectedUser === undefined || selectedUser === null){
             return;
         }

@@ -46,15 +46,23 @@ class GameController extends AbstractController
         return $this->gameProcessor->detectiveEliminatePlayer($_SESSION['game_id'], $_SESSION['user_id'], $data['user_id']);
     }
 
-    public function playNightPhase(array $data): void
+    public function playNightPhase(array $data): Response
     {
         $userToEliminateOrProtect = $data['user_id'] ?: null;
         $this->nightPhaseProcessor->playNightPhase($_SESSION['game_id'], $_SESSION['user_id'], $userToEliminateOrProtect);
+        return Response::create(1);
     }
 
-    public function changeGameStatus(array $data): void
+    public function changeGameStatus(array $data): Response
     {
         $this->gameRepository->updateStatus($_SESSION['game_id'], $data['status']);
+        return Response::create(1);
+    }
+
+    public function endGame(array $data): Response
+    {
+        $this->gameProcessor->endGame($_SESSION['game_id']);
+        return Response::create(1);
     }
 }
 

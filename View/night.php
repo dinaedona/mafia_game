@@ -5,6 +5,7 @@ require_once '../Repository/UserRoleRepository.php';
 require_once '../Repository/GameRepository.php';
 require_once '../Model/GameUserRole.php';
 require_once '../Model/UserRole.php';
+
 $gameUserRepo = new GameUserRepository();
 $userRoleRepo = new UserRoleRepository();
 $gameRepo = new GameRepository();
@@ -39,7 +40,7 @@ $role = $isMafia ? 'mafia' : 'doctor'
                                     <label for="user<?= $gameUserRole->getUserRole()->getUser()->getId() ?>">
                                         <input type="radio"
                                                id="user<?= $gameUserRole->getUserRole()->getUser()->getId() ?>"
-                                               name="user_to_<?= $key ?>>"
+                                               name="user_to_<?= $key ?>"
                                             <?= $gameUserRole->isAlive() ? '' : 'disabled' ?>
                                                value="<?= $gameUserRole->getUserRole()->getUser()->getId() ?>">
                                         <?= $gameUserRole->getUserRole()->getUser()->getUsername() ?>:
@@ -60,7 +61,6 @@ $role = $isMafia ? 'mafia' : 'doctor'
         </div>
     </div>
 <?php endif; ?>
-<script src="/assets/js/night_phase.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -105,9 +105,53 @@ $role = $isMafia ? 'mafia' : 'doctor'
                 }, 1000);
                 playNightPhase();
             }
+        function changeGameStatus(status) {
+            $.ajax({
+                type: 'POST',
+                url: '/Controller/GameController.php',
+                data: {method: 'changeGameStatus', status: status},
+                dataType: "json",
+                success: function () {
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        function playMafiaDoctorNightPhase(selectedUser) {
+            $.ajax({
+                type: 'POST',
+                url: '/Controller/GameController.php',
+                data: {method: 'playNightPhase', user_id: selectedUser},
+                dataType: "json",
+                success: function (response) {
+                    changeGameStatus('Day');
+                    window.open('day.php', '_self')
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
 
+        $('#mafia_eliminate_player').click(function () {
+            let selectedUser = $('input[name="user_to_eliminate"]').filter(":checked").val();
+            if (selectedUser === undefined || selectedUser === null) {
+                return;
+            }
+            playMafiaDoctorNightPhase(selectedUser);
+        });
+
+        $('#doctor_protect_player').click(function () {
+            console.log('fffff')
+            let selectedUser = $('input[name="user_to_protect"]').filter(":checked").val();
+            console.log(selectedUser);
+            if (selectedUser === undefined || selectedUser === null) {
+                return;
+            }
+            playMafiaDoctorNightPhase(selectedUser);
+        });
     });
 </script>
-<script src="/assets/js/status.js"></script>
 <script src="/assets/js/game.js"></script>
 

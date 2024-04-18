@@ -1,5 +1,4 @@
-<?php include 'header.php' ?>
-<?php include 'game_status.php' ?>
+<?php include 'header.php'; ?>
 <div class="container mt-5 justify-content-center">
     <div class="card justify-content-center" style="width: 30rem; ">
         <div class="card-body">
