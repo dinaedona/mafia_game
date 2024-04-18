@@ -6,6 +6,7 @@ require_once '../Repository/GameRepository.php';
 require_once '../Repository/UserRepository.php';
 require_once '../Repository/UserRoleRepository.php';
 require_once '../Repository/GameUserRepository.php';
+
 class NightPhaseProcessor
 {
 
@@ -27,16 +28,19 @@ class NightPhaseProcessor
         $this->gameUserHistoryRepository = new GameUserHistoryRepository();
         $this->connection = DBConnection::connect();
     }
-    public function playNightPhase(int $gameId, int $loggedInUserId, ?int $userEliminateOrProtect)
-    {
-        $userRole = $this->userRoleRepository->findOneByGameIdAndUserId($gameId, $loggedInUserId);
-        $game = $this->gameRepository->findOneById($gameId);
 
-        $aliveUsers = $this->gameUserRepository->findAliveByGameId($gameId);
-        $eliminateUserId = $this->getUserToEliminate($userRole, $userEliminateOrProtect, $aliveUsers);
-        $protectUserId = $this->getUserToProtect($gameId, $userRole, $userEliminateOrProtect, $aliveUsers);
-        $newGame = Game::fromValues($game->getId(), $game->getStatus(), ($game->getDay() + 1), $eliminateUserId, $protectUserId);
-        $this->gameRepository->update($newGame);
+    public function playNightPhase(int $gameId, int $loggedInUserId, ?int $userEliminateOrProtect): void
+    {
+        $this->connection->runInTransaction(function () use ($gameId, $loggedInUserId, $userEliminateOrProtect) {
+            $userRole = $this->userRoleRepository->findOneByGameIdAndUserId($gameId, $loggedInUserId);
+            $game = $this->gameRepository->findOneById($gameId);
+
+            $aliveUsers = $this->gameUserRepository->findAliveByGameId($gameId);
+            $eliminateUserId = $this->getUserToEliminate($userRole, $userEliminateOrProtect, $aliveUsers);
+            $protectUserId = $this->getUserToProtect($gameId, $userRole, $userEliminateOrProtect, $aliveUsers);
+            $newGame = Game::fromValues($game->getId(), $game->getStatus(), ($game->getDay() + 1), $eliminateUserId, $protectUserId);
+            $this->gameRepository->update($newGame);
+        });
     }
 
     /**
@@ -64,7 +68,7 @@ class NightPhaseProcessor
     private function getUserToProtect(int $gameId, UserRole $userRole, ?int $userEliminateOrProtect, array $gameUserRoles): ?int
     {
         $doctor = $this->gameUserRepository->findDoctorByGameId($gameId);
-        if(!$doctor->isAlive()){
+        if (!$doctor->isAlive()) {
             return null;
         }
         if ($userRole->getRole()->isDoctor()) {

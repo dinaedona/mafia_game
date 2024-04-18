@@ -31,31 +31,31 @@ $game = $gameRepo->findOneById($_SESSION['game_id']);
             </div>
             <div class="row">
                 <div class="col-md-12" id="user_role_section" style="margin-top: 15px">
-                            <h6 class="card-title">Player you want to kill</h6>
-                            <form>
-                                <?php foreach ($gameUserRoles as $gameUserRole):
-                                    if ($gameUserRole->getUserRole()->getUser()->getId() === $loggedInUser->getUser()->getId()) {
-                                        continue;
-                                    } ?>
-                                    <div class="form-group" <?= $gameUserRole->isAlive() ? '' : 'style="color: red"' ?>>
-                                        <label for="user<?= $gameUserRole->getUserRole()->getUser()->getId() ?>">
-                                            <input type="radio"
-                                                   id="user<?= $gameUserRole->getUserRole()->getUser()->getId() ?>"
-                                                   name="user_to_eliminate"
-                                                   <?= $gameUserRole->isAlive() ? '' : 'disabled' ?>
-                                                   value="<?= $gameUserRole->getUserRole()->getUser()->getId() ?>">
-                                            <?= $gameUserRole->getUserRole()->getUser()->getUsername() ?>:
-                                            <span style="font-style: italic; font-size: 10px;">" <?= $gameUserRole->getText() ?>"</span>
-                                        </label>
-                                    </div>
-                                <?php endforeach; ?>
-                                <div class="form-group" style="float: right">
-                                    <button type="button" class="btn btn btn-light mr-2"
-                                            style="width: 100px; font-weight: bold; background-image: url('/assets/img/background.png')"
-                                            id="eliminate_player">Save
-                                    </button>
-                                </div>
-                            </form>
+                    <h6 class="card-title">Player you want to kill</h6>
+                    <form>
+                        <?php foreach ($gameUserRoles as $gameUserRole):
+                            if ($gameUserRole->getUserRole()->getUser()->getId() === $loggedInUser->getUser()->getId()) {
+                                continue;
+                            } ?>
+                            <div class="form-group" <?= $gameUserRole->isAlive() ? '' : 'style="color: red"' ?>>
+                                <label for="user<?= $gameUserRole->getUserRole()->getUser()->getId() ?>">
+                                    <input type="radio"
+                                           id="user<?= $gameUserRole->getUserRole()->getUser()->getId() ?>"
+                                           name="user_to_eliminate"
+                                        <?= $gameUserRole->isAlive() ? '' : 'disabled' ?>
+                                           value="<?= $gameUserRole->getUserRole()->getUser()->getId() ?>">
+                                    <?= $gameUserRole->getUserRole()->getUser()->getUsername() ?>:
+                                    <span style="font-style: italic; font-size: 10px;">" <?= $gameUserRole->getText() ?>"</span>
+                                </label>
+                            </div>
+                        <?php endforeach; ?>
+                        <div class="form-group" style="float: right">
+                            <button type="button" class="btn btn btn-light mr-2"
+                                    style="width: 100px; font-weight: bold; background-image: url('/assets/img/background.png')"
+                                    id="eliminate_player">Save
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -65,7 +65,7 @@ $game = $gameRepo->findOneById($_SESSION['game_id']);
             <h3 class="text-center">Game History</h3>
             <div class="row">
                 <div class="col-md-12 scrollable-div" id="game_user_history">
-                <?php include 'game_user_history.php' ?>
+                    <?php include 'game_user_history.php' ?>
                 </div>
             </div>
         </div>

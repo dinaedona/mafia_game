@@ -97,16 +97,4 @@ class UserRoleProcessor
         $userIndex = array_rand($users);
         return $users[$userIndex];
     }
-    /**
-     * @param UserRole[] $userRoles
-     */
-    public function getUserRoleByUserId(array $userRoles, int $userId): ?UserRole{
-
-        foreach ($userRoles as $userRole){
-            if($userRole->getUser()->getId() === $userId){
-                return $userRole;
-            }
-        }
-        return null;
-    }
 }

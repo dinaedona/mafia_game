@@ -16,14 +16,15 @@ $loggedInUser = $gameUserRepo->findOneByGameIdAndUserId($_SESSION['game_id'], $_
 $gameUserRoles = $gameUserRepo->findAliveByGameId($_SESSION['game_id']);
 $game = $gameRepo->findOneById($_SESSION['game_id']);
 $isMafia = $loggedInUser->getUserRole()->getRole()->isMafia();
-$isDoctorAndAlive =  $loggedInUser->getUserRole()->getRole()->isDoctor() && $loggedInUser->isAlive();
+$isDoctorAndAlive = $loggedInUser->getUserRole()->getRole()->isDoctor() && $loggedInUser->isAlive();
 $key = $isMafia ? 'eliminate' : 'protect';
 $role = $isMafia ? 'mafia' : 'doctor'
 ?>
 <div class="form-group text-center">
-<h1 class="text-center mt-5"> Night phase...zzZ! </h1>
-<span class=" text-center" data-show="<?= !$isMafia && !$isDoctorAndAlive ? 1: 0 ?>"
-      style="font-size: larger; font-weight: bolder; <?= !$isMafia && !$isDoctorAndAlive ? '': 'display:none' ?>" id="countdown">10</span>
+    <h1 class="text-center mt-5"> Night phase...zzZ! </h1>
+    <span class=" text-center" data-show="<?= !$isMafia && !$isDoctorAndAlive ? 1 : 0 ?>"
+          style="font-size: larger; font-weight: bolder; <?= !$isMafia && !$isDoctorAndAlive ? '' : 'display:none' ?>"
+          id="countdown">10</span>
 </div>
 
 
@@ -82,31 +83,32 @@ $role = $isMafia ? 'mafia' : 'doctor'
         }
 
 
-            let countDownElem = document.getElementById("countdown");
-            if (parseInt(countDownElem.getAttribute('data-show')) === 1) {
-                let currentTimestamp = Date.now();
-                // Add 10 seconds (30,000 milliseconds) to the current timestamp
-                let futureTimestamp = currentTimestamp + 10000;
-                // Set the date we're counting down to
-                let countDownDate = new Date(futureTimestamp).getTime();
+        let countDownElem = document.getElementById("countdown");
+        if (parseInt(countDownElem.getAttribute('data-show')) === 1) {
+            let currentTimestamp = Date.now();
+            // Add 10 seconds (30,000 milliseconds) to the current timestamp
+            let futureTimestamp = currentTimestamp + 10000;
+            // Set the date we're counting down to
+            let countDownDate = new Date(futureTimestamp).getTime();
 
-                // Update the count down every 1 second
-                let x = setInterval(function () {
-                    let now = new Date().getTime();
-                    let distance = countDownDate - now;
-                    let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                    // Display the result in the element with id="demo"
-                    document.getElementById("countdown").innerHTML = seconds + "s ";
+            // Update the count down every 1 second
+            let x = setInterval(function () {
+                let now = new Date().getTime();
+                let distance = countDownDate - now;
+                let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                // Display the result in the element with id="demo"
+                document.getElementById("countdown").innerHTML = seconds + "s ";
 
-                    // If the count down is finished, write some text
-                    if (seconds < 1) {
-                        clearInterval(x);
-                        changeGameStatus('Day');
-                        window.open('day.php', '_self')
-                    }
-                }, 1000);
-                playNightPhase();
-            }
+                // If the count down is finished, write some text
+                if (seconds < 1) {
+                    clearInterval(x);
+                    changeGameStatus('Day');
+                    window.open('day.php', '_self')
+                }
+            }, 1000);
+            playNightPhase();
+        }
+
         function changeGameStatus(status) {
             $.ajax({
                 type: 'POST',
@@ -120,6 +122,7 @@ $role = $isMafia ? 'mafia' : 'doctor'
                 }
             });
         }
+
         function playMafiaDoctorNightPhase(selectedUser) {
             $.ajax({
                 type: 'POST',

@@ -46,13 +46,15 @@ class GameProcessor
 
     public function saveStatements(int $gameId, int $loggedInUserId, $text): void
     {
-        $userTexts[(string)$loggedInUserId] = $text;
-        $users = $this->userRepository->findPcPlayers();
-        foreach ($users as $user) {
-            $userTexts[(string)$user->getId()] = Text::getRandomText();
-        }
-        $this->gameUserRepository->updateText($gameId, $userTexts);
-        $this->gameRepository->updateStatus($gameId, 'Day');
+         $this->connection->runInTransaction(function () use ($gameId, $loggedInUserId, $text) {
+            $userTexts[(string)$loggedInUserId] = $text;
+            $users = $this->userRepository->findPcPlayers();
+            foreach ($users as $user) {
+                $userTexts[(string)$user->getId()] = Text::getRandomText();
+            }
+            $this->gameUserRepository->updateText($gameId, $userTexts);
+            $this->gameRepository->updateStatus($gameId, 'Day');
+        });
     }
 
     public function endGame(int $gameId)
@@ -63,23 +65,27 @@ class GameProcessor
 
     public function eliminatePlayer(int $gameId, int $loggedInUserId, int $userToEliminate): Response
     {
-        // list of eliminations for all users
-        $usersToEliminate = $this->trackHistoryOfElimination($gameId, $loggedInUserId, $userToEliminate);
-        //most voted users to be eliminated
-        $eliminatedUserIds = $this->getEliminatedUserByVotes($gameId, $loggedInUserId, $usersToEliminate);
-        // return list of players to investigate detective for them
-        if (count($eliminatedUserIds) > 1) {
-            return Response::create(-1, 'Detective should investigate players', $eliminatedUserIds);
-        }
-        $eliminatedUserId = $eliminatedUserIds[0];
-        return $this->checkForGameRules($gameId, $eliminatedUserId);
+        return $this->connection->runInTransaction(function () use ($gameId, $loggedInUserId, $userToEliminate) {
+            // list of eliminations for all users
+            $usersToEliminate = $this->trackHistoryOfElimination($gameId, $loggedInUserId, $userToEliminate);
+            //most voted users to be eliminated
+            $eliminatedUserIds = $this->getEliminatedUserByVotes($gameId, $loggedInUserId, $usersToEliminate);
+            // return list of players to investigate detective for them
+            if (count($eliminatedUserIds) > 1) {
+                return Response::create(-1, 'Detective should investigate players', $eliminatedUserIds);
+            }
+            $eliminatedUserId = $eliminatedUserIds[0];
+            return $this->checkForGameRules($gameId, $eliminatedUserId);
+        });
     }
 
     public function detectiveEliminatePlayer(int $gameId, int $loggedInUserId, int $userToEliminate): Response
     {
-        // track history for eliminations
-        $this->trackHistoryOfDetectiveElimination($gameId, $loggedInUserId, $userToEliminate);
-        return $this->checkForGameRules($gameId, $userToEliminate);
+        return $this->connection->runInTransaction(function () use ($gameId, $loggedInUserId, $userToEliminate) {
+            // track history for eliminations
+            $this->trackHistoryOfDetectiveElimination($gameId, $loggedInUserId, $userToEliminate);
+            return $this->checkForGameRules($gameId, $userToEliminate);
+        });
     }
 
     private function checkForGameRules(int $gameId, int $eliminatedUserId): Response
@@ -174,7 +180,6 @@ class GameProcessor
     {
         $counts = array_count_values($users);
         $maxCount = max($counts);
-        $mostVotedUsers = array_keys($counts, $maxCount);
-        return $mostVotedUsers;
+        return array_keys($counts, $maxCount);
     }
 }

@@ -13,7 +13,7 @@ $gameRepo = new GameRepository();
 $gameUserRoles = $gameUserRepo->findByGameIdAndUserIds($_SESSION['game_id'], json_decode($_POST['user_ids'], true));
 $game = $gameRepo->findOneById($_SESSION['game_id']);
 ?>
-<h6 class="card-title">Investigate the most suspect players</h6>
+<h6 class="card-title">investigate the most suspect players</h6>
 <form>
     <?php foreach ($gameUserRoles as $gameUserRole):?>
         <div class="form-group">
